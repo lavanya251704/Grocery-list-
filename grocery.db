@@ -1,0 +1,43 @@
+# init_db.py
+import sqlite3
+
+def create_tables():
+    conn = sqlite3.connect('grocery.db')
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS menu (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            price REAL NOT NULL
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS wishlist (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            price REAL NOT NULL
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS purchased (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            price REAL NOT NULL
+        )
+    ''')
+
+    # Insert sample menu items
+    cursor.execute("INSERT OR IGNORE INTO menu (name, price) VALUES ('Apples (1kg)', 2.50)")
+    cursor.execute("INSERT OR IGNORE INTO menu (name, price) VALUES ('Milk (1L)', 1.00)")
+    cursor.execute("INSERT OR IGNORE INTO menu (name, price) VALUES ('Bread (1 loaf)', 1.80)")
+    cursor.execute("INSERT OR IGNORE INTO menu (name, price) VALUES ('Eggs (1 dozen)', 3.00)")
+
+    conn.commit()
+    conn.close()
+
+if __name__ == '__main__':
+    create_tables()
+    print("Database and tables created successfully.")
