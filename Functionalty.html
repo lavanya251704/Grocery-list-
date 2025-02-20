@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery List & Purchase Menu</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-section, .wishlist-section, .purchased-section {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .wishlist-item, .purchased-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .wishlist-item:last-child, .purchased-item:last-child {
+            border-bottom: none;
+        }
+
+        .add-btn, .purchase-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .total-cost {
+            text-align: right;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Your Grocery Hub</h1>
+        <p>Shop smart, shop organized.</p>
+    </div>
+
+    <div class="container">
+        <div class="menu-section">
+            <h2>Menu</h2>
+            <div class="menu-item"><span>Apples (1kg) - $2.50</span><button class="add-btn" onclick="addToWishlist('Apples', 2.50)">Add</button></div>
+            <div class="menu-item"><span>Milk (1L) - $1.00</span><button class="add-btn" onclick="addToWishlist('Milk', 1.00)">Add</button></div>
+            <div class="menu-item"><span>Bread (1 loaf) - $1.80</span><button class="add-btn" onclick="addToWishlist('Bread', 1.80)">Add</button></div>
+            <div class="menu-item"><span>Eggs (1 dozen) - $3.00</span><button class="add-btn" onclick="addToWishlist('Eggs', 3.00)">Add</button></div>
+        </div>
+
+        <div class="wishlist-section">
+            <h2>Wishlist</h2>
+            <ul id="wishlist"></ul>
+            <div class="total-cost" id="wishlistTotal">Total: $0.00</div>
+        </div>
+
+        <div class="purchased-section">
+            <h2>Purchased Items</h2>
+            <ul id="purchased"></ul>
+            <div class="total-cost" id="purchasedTotal">Total: $0.00</div>
+        </div>
+    </div>
+
+    <script>
+        const wishlist = document.getElementById('wishlist');
+        const purchased = document.getElementById('purchased');
+        const wishlistTotal = document.getElementById('wishlistTotal');
+        const purchasedTotal = document.getElementById('purchasedTotal');
+
+        let wishlistItems = [];
+        let purchasedItems = [];
+
+        function addToWishlist(name, price) {
+            wishlistItems.push({ name: name, price: price });
+            updateWishlist();
+        }
+
+        function purchaseItem(index) {
+            const item = wishlistItems.splice(index, 1)[0];
+            purchasedItems.push(item);
+            updateWishlist();
+            updatePurchased();
+        }
+
+        function removeItem(index, list, updateFunction) {
+            list.splice(index, 1);
+            updateFunction();
+        }
+
+        function updateWishlist() {
+            wishlist.innerHTML = '';
+            let total = 0;
+            wishlistItems.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'wishlist-item';
+                li.innerHTML = `
+                    <span>${item.name} - $${item.price.toFixed(2)}</span>
+                    <div>
+                        <button class="purchase-btn" onclick="purchaseItem(${index})">Purchase</button>
+                        <button class="delete-btn" onclick="removeItem(${index}, wishlistItems, updateWishlist)">Delete</button>
+                    </div>
+                `;
+                wishlist.appendChild(li);
+                total += item.price;
+            });
+            wishlistTotal.textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        function updatePurchased() {
+            purchased.innerHTML = '';
+            let total = 0;
+            purchasedItems.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'purchased-item';
+                li.innerHTML = `
+                    <span>${item.name} - $${item.price.toFixed(2)}</span>
+                    <button class="delete-btn" onclick="removeItem(${index}, purchasedItems, updatePurchased)">Delete</button>
+                `;
+                purchased.appendChild(li);
+                total += item.price;
+            });
+            purchasedTotal.textContent = `Total: $${total.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>
